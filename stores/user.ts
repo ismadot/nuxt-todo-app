@@ -18,13 +18,21 @@ export const useUserStore = defineStore(
     const setUser = (u: User | null) => {
       user.value = u;
     };
+    const initialized = ref(false);
 
     const initAuth = () => {
+      if (initialized.value) return;
+      initialized.value = true;
+
       const { $auth } = useNuxtApp();
       onAuthStateChanged($auth, (u) => {
-        user.value = u;
+        queueMicrotask(() => {
+          user.value = u ?? null;
+        });
       });
-    };
+    }
+    
+
 
     const loginWithGoogle = async () => {
       const { $auth } = useNuxtApp();
@@ -45,7 +53,7 @@ export const useUserStore = defineStore(
       const { $auth } = useNuxtApp();
       await signOut($auth);
       user.value = null;
-    };
+    }
 
     return {
       user,

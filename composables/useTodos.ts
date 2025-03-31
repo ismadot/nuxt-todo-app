@@ -1,57 +1,86 @@
-import { collection, addDoc, getDocs, query, where, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
-import { useNuxtApp } from '#app'
-import { useUserStore } from '@/stores/user'
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDocs,
+} from "firebase/firestore";
 
-export function useTodos() {
-  const { $db } = useNuxtApp()
-  const userStore = useUserStore()
+export interface Todo {
+  id: string;
+  text: string;
+  done: boolean;
+}
 
-  const todos = ref<any[]>([])
+export const useTodoStore = defineStore("todo", () => {
+  const todos = ref<Todo[]>([]);
+  const loading = ref(false);
+  useUserStore();
+  const userStore = useUserStore();
 
   const fetchTodos = async () => {
-    if (!userStore.user?.uid) return
+    const { $db } = useNuxtApp();
 
-    const q = query(
-      collection($db, 'todos'),
-      where('userId', '==', userStore.user.uid)
-    )
+    loading.value = true;
+    const userTodosRef = collection($db, `users/${userStore.user?.uid}/todos`);
+    const snapshot = await getDocs(userTodosRef);
 
-    const snapshot = await getDocs(q)
-    todos.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-  }
+    todos.value = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as Omit<Todo, "id">),
+    }));
+
+    loading.value = false;
+  };
 
   const addTodo = async (text: string) => {
-    if (!userStore.user?.uid) return
+    const { $db } = useNuxtApp();
 
-    const docRef = await addDoc(collection($db, 'todos'), {
+    const userTodosRef = collection($db, `users/${userStore.user?.uid}/todos`);
+    const docRef = await addDoc(userTodosRef, {
       text,
-      completed: false,
-      userId: userStore.user.uid,
-      createdAt: serverTimestamp()
-    })
+      done: false,
+    });
 
-    todos.value.push({ id: docRef.id, text, completed: false })
-  }
-
-  const toggleTodo = async (id: string, current: boolean) => {
-    await updateDoc(doc($db, 'todos', id), {
-      completed: !current
-    })
-
-    const todo = todos.value.find(t => t.id === id)
-    if (todo) todo.completed = !todo.completed
-  }
+    todos.value.push({
+      id: docRef.id,
+      text,
+      done: false,
+    });
+  };
 
   const deleteTodo = async (id: string) => {
-    await deleteDoc(doc($db, 'todos', id))
-    todos.value = todos.value.filter(t => t.id !== id)
-  }
+    const { $db } = useNuxtApp();
+
+    const todoRef = doc($db, `users/${userStore.user?.uid}/todos`, id);
+    await deleteDoc(todoRef);
+
+    todos.value = todos.value.filter((todo) => todo.id !== id);
+  };
+
+  const toggleDone = async (id: string) => {
+    const { $db } = useNuxtApp();
+
+    const todo = todos.value.find((t) => t.id === id);
+    if (!todo) return;
+
+    todo.done = !todo.done;
+
+    const todoRef = doc($db, `users/${userStore.user?.uid}/todos`, id);
+    await updateDoc(todoRef, {
+      done: todo.done,
+    });
+  };
 
   return {
     todos,
+    loading,
     fetchTodos,
     addTodo,
-    toggleTodo,
-    deleteTodo
-  }
-}
+    deleteTodo,
+    toggleDone,
+  };
+});

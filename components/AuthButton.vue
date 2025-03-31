@@ -1,7 +1,8 @@
 <template>
   <div class="flex items-center gap-4">
     <div v-if="user">
-      <span class="text-gray-700">👤 {{ user.displayName }}</span>
+      <img :src="userStore.user.photoURL" class="w-8 h-8 rounded-full" />
+      <span class="text-gray-700">hola, {{ user.displayName }} {{ "  " }} </span>
       <button
         @click="logout"
         class="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 text-sm"

@@ -1,7 +1,9 @@
 <template>
   <div class="max-w-xl mx-auto p-4">
     <AuthButton class="mb-6" />
-
+    <div v-if="!userStore.authReady" class="text-center py-10 text-gray-400">
+      🔄 Verificando sesión...
+    </div>
     <div v-if="user">
       <h1 class="text-2xl font-bold mb-4">📝 TODO App con Markdown</h1>
 

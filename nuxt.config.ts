@@ -40,6 +40,8 @@ export default defineNuxtConfig({
       background_color: "#ffffff",
       display: "standalone",
       orientation: "portrait",
+      start_url: "/",      // 👈 obligatorio para instalación
+      scope: "/",          // 👈 delimita el alcance de la PWA
       icons: [
         {
           src: "/icon-192.png",

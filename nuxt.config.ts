@@ -56,11 +56,12 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-  globPatterns: ["**/*.{js,css,html,png,svg,ico,json,webp,jpg,jpeg}"],
+      globPatterns: ["**/*.{js,css,html,png,svg,ico,json,webp,jpg,jpeg}"],
       navigateFallback: '/offline.html', // 👈 importante para Vercel SSR
       additionalManifestEntries: [
         { url: "/offline.html", revision: null } // 👈 fuerza cacheo
       ],
+      navigateFallbackAllowlist: [/^(?!\/offline$).*/],
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com/,

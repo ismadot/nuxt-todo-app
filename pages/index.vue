@@ -112,13 +112,14 @@ const newTitle = ref('')
 const newText = ref('')
 const editingTodoId = ref<string | null>(null)
 const loading = ref(false)
-const isOnline = ref(navigator.onLine)
+const isOnline = ref(true) // valor por defecto (evita error en SSR)
 
 onMounted(() => {
   userStore.initAuth()
   if (user.value) {
     todoStore.fetchTodos()
   }
+  isOnline.value = navigator.onLine
   window.addEventListener("online", () => (isOnline.value = true))
   window.addEventListener("offline", () => (isOnline.value = false))
 })

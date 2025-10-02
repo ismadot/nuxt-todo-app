@@ -59,6 +59,8 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
+      cleanupOutdatedCaches: true,
+      clientsClaim: true,
       globPatterns: ["**/*.{js,css,html,png,svg,ico,json,webp,jpg,jpeg}"],
       navigateFallback: '/offline.html', // 👈 importante para Vercel SSR
       additionalManifestEntries: [

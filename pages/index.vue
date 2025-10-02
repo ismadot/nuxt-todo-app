@@ -1,5 +1,8 @@
 <template>
   <div class="max-w-xl mx-auto p-4">
+    <div v-if="!isOnline" class="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded">
+      ⚠️ Estás sin conexión. Algunas funciones pueden no estar disponibles.
+    </div>
     <AuthButton class="mb-6" />
     <div v-if="user">
       <h1 class="text-2xl font-bold mb-4">📝 TODO App con Markdown</h1>
@@ -109,12 +112,15 @@ const newTitle = ref('')
 const newText = ref('')
 const editingTodoId = ref<string | null>(null)
 const loading = ref(false)
+const isOnline = ref(navigator.onLine)
 
 onMounted(() => {
   userStore.initAuth()
   if (user.value) {
     todoStore.fetchTodos()
   }
+  window.addEventListener("online", () => (isOnline.value = true))
+  window.addEventListener("offline", () => (isOnline.value = false))
 })
 
 watch(user, (newUser) => {
@@ -127,6 +133,10 @@ watch(user, (newUser) => {
 
 const createOrUpdateTodo = async () => {
   if (!newText.value.trim() || !newTitle.value.trim()) return
+  if (!isOnline.value) {
+      alert("No puedes guardar tareas estando offline 🚫")
+      return
+    }
 
   loading.value = true
 

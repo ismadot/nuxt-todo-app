@@ -64,7 +64,7 @@ export default defineNuxtConfig({
       additionalManifestEntries: [
         { url: "/offline.html", revision: null } // 👈 fuerza cacheo
       ],
-      navigateFallbackAllowlist: [/^(?!\/ogg$).*/],
+      navigateFallbackAllowlist: [/^(?!\/offline$).*/],
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com/,

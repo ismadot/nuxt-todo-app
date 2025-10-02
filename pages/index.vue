@@ -103,7 +103,13 @@ import { useTodoStore } from '@/stores/todo'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import AuthButton from '@/components/AuthButton.vue'
+import { useHead } from '#imports'
 
+useHead({
+  link: [
+    { rel: 'manifest', href: '/manifest.webmanifest' }
+  ]
+})
 const todoStore = useTodoStore()
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)

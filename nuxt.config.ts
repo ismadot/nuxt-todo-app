@@ -87,6 +87,10 @@ export default defineNuxtConfig({
               maxAgeSeconds: 60 * 60 * 24 * 30, // 30 días
             },
           },
+        },
+        {
+          urlPattern: /^https:\/\/www\.google\.com\/images\/cleardot\.gif/,
+          handler: "NetworkOnly"  // 👈 no intentes cachear
         }
       ],
     },

@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.13.2",
     "@pinia/nuxt": "^0.10.1",
+    "@vite-pwa/nuxt": "^1.0.4",
     "@vueuse/nuxt": "^13.0.0",
     "firebase": "^11.5.0",
     "marked": "^15.0.7",
